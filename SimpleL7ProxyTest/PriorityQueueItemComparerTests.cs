@@ -29,8 +29,9 @@ public class PriorityQueueItemComparerTests
     [Test]
     public void Compare_ShouldReturnPositive_WhenSecondItemIsNull()
     {
+        DateTime dTime = DateTime.Now;
         // Arrange
-        var item1 = new PriorityQueueItem<int>(1, 1);
+        var item1 = new PriorityQueueItem<int>(1, 1,dTime);
 
         // Act
         int result = _mockComparer.Object.Compare(item1, null);
@@ -42,9 +43,10 @@ public class PriorityQueueItemComparerTests
     [Test]
     public void Compare_ShouldReturnNegative_WhenFirstItemHasLowerPriority()
     {
+        DateTime dTime = DateTime.Now;
         // Arrange
-        var item1 = new PriorityQueueItem<int>(1, 1);
-        var item2 = new PriorityQueueItem<int>(1, 2);
+        var item1 = new PriorityQueueItem<int>(1, 1, dTime);
+        var item2 = new PriorityQueueItem<int>(1, 2, dTime);
 
         // Act
         int result = _mockComparer.Object.Compare(item1, item2);
@@ -56,9 +58,10 @@ public class PriorityQueueItemComparerTests
     [Test]
     public void Compare_ShouldReturnPositive_WhenFirstItemHasHigherPriority()
     {
+        DateTime dTime = DateTime.Now;
         // Arrange
-        var item1 = new PriorityQueueItem<int>(1, 2);
-        var item2 = new PriorityQueueItem<int>(1, 1);
+        var item1 = new PriorityQueueItem<int>(1, 2, dTime);
+        var item2 = new PriorityQueueItem<int>(1, 1, dTime);
 
         // Act
         int result = _mockComparer.Object.Compare(item1, item2);
@@ -70,10 +73,12 @@ public class PriorityQueueItemComparerTests
     [Test]
     public void Compare_ShouldReturnNegative_WhenItemsHaveSamePriorityButFirstIsOlder()
     {
+        DateTime dTime = DateTime.Now;
         // Arrange
-        var item1 = new PriorityQueueItem<int>(1, 1);
+        var item1 = new PriorityQueueItem<int>(1, 1, dTime);
         Thread.Sleep(100);
-        var item2 = new PriorityQueueItem<int>(1, 1);
+        dTime = DateTime.Now;
+        var item2 = new PriorityQueueItem<int>(1, 1, dTime);
 
         // Act
         int result = _mockComparer.Object.Compare(item1, item2);
@@ -86,10 +91,11 @@ public class PriorityQueueItemComparerTests
     public void Compare_ShouldReturnPositive_WhenItemsHaveSamePriorityButFirstIsNewer()
     {
         // Arrange
-
-        var item2 = new PriorityQueueItem<int>(1, 1);
+        DateTime dTime = DateTime.Now;
+        var item2 = new PriorityQueueItem<int>(1, 1, dTime);
         Thread.Sleep(100);
-        var item1 = new PriorityQueueItem<int>(1, 1);
+        dTime = DateTime.Now;
+        var item1 = new PriorityQueueItem<int>(1, 1, dTime);
 
         // Act
         int result = _mockComparer.Object.Compare(item1, item2);

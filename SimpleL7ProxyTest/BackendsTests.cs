@@ -25,7 +25,7 @@ public class BackendsTests
     private Mock<BackendHost> _mockBackendHost;
     private Mock<Backends> _backends;
     private CancellationTokenSource _cancellationTokenSource;
-
+    private IEventHubClient _eventHubClient;
     [SetUp]
     public void Setup()
     {
@@ -43,7 +43,7 @@ public class BackendsTests
         _mockOptions = new Mock<IOptions<BackendOptions>>();
         _mockOptions.Setup(o => o.Value).Returns(_backendOptions);
 
-        _backends = new Mock<Backends>(_mockOptions.Object);
+        _backends = new Mock<Backends>(_mockOptions.Object,_eventHubClient);
         _cancellationTokenSource = new CancellationTokenSource();
     }
 

@@ -20,9 +20,10 @@ public class PriorityQueueTests
         // Arrange
         int item = 1;
         int priority = 1;
-
+        DateTime timestamp = DateTime.Now;
+        var queueItem = new PriorityQueueItem<int>(item, priority, timestamp);
         // Act
-        _mockQueue.Object.Enqueue(item, priority);
+        _mockQueue.Object.Enqueue(queueItem);
 
         // Assert
         Assert.AreEqual(1, _mockQueue.Object.Count);
@@ -32,10 +33,13 @@ public class PriorityQueueTests
     [Test]
     public void Enqueue_ShouldInsertItemsInCorrectOrder()
     {
+        var queueItem = new PriorityQueueItem<int>(3, 3, DateTime.Now);
         // Arrange
-        _mockQueue.Object.Enqueue(3, 3);
-        _mockQueue.Object.Enqueue(1, 1);
-        _mockQueue.Object.Enqueue(2, 2);
+        _mockQueue.Object.Enqueue(queueItem);
+        queueItem = new PriorityQueueItem<int>(1, 1, DateTime.Now);
+        _mockQueue.Object.Enqueue(queueItem);
+        queueItem = new PriorityQueueItem<int>(2, 2, DateTime.Now);
+        _mockQueue.Object.Enqueue(queueItem);
 
         // Act
         var result = _mockQueue.Object.GetItemsAsCommaSeparatedString();
@@ -47,10 +51,17 @@ public class PriorityQueueTests
     [Test]
     public void Dequeue_ShouldRemoveAndReturnHighestPriorityItem()
     {
+        var queueItem = new PriorityQueueItem<int>(1, 1, DateTime.Now);
         // Arrange
-        _mockQueue.Object.Enqueue(1, 1);
-        _mockQueue.Object.Enqueue(2, 2);
-        _mockQueue.Object.Enqueue(3, 3);
+        _mockQueue.Object.Enqueue(queueItem);
+        // Arrange
+        queueItem = new PriorityQueueItem<int>(2, 2, DateTime.Now);
+        // Arrange
+        _mockQueue.Object.Enqueue(queueItem);
+
+        queueItem = new PriorityQueueItem<int>(3, 3, DateTime.Now);
+        // Arrange
+        _mockQueue.Object.Enqueue(queueItem);
 
         // Act
         int result = _mockQueue.Object.Dequeue();
@@ -72,9 +83,13 @@ public class PriorityQueueTests
     [Test]
     public void Count_ShouldReturnCorrectNumberOfItems()
     {
+       var queueItem = new PriorityQueueItem<int>(1, 1, DateTime.Now);
         // Arrange
-        _mockQueue.Object.Enqueue(1, 1);
-        _mockQueue.Object.Enqueue(2, 2);
+        _mockQueue.Object.Enqueue(queueItem);
+        // Arrange
+        queueItem = new PriorityQueueItem<int>(2, 2, DateTime.Now);
+        // Arrange
+        _mockQueue.Object.Enqueue(queueItem);
 
         // Act
         int count = _mockQueue.Object.Count;

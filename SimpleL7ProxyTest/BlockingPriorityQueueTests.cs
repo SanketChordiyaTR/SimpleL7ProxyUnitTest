@@ -4,6 +4,7 @@ using System.Threading;
 using SimpleL7Proxy.PriorityQueue;
 using SimpleL7ProxyTest.BackendHostTest;
 using Moq;
+using System.Timers;
 
 namespace SimpleL7ProxyTest
 {
@@ -17,6 +18,7 @@ namespace SimpleL7ProxyTest
         {
             _mockQueue = new Mock<BlockingPriorityQueue<int>>();
             _mockQueue.Object.MaxQueueLength = 3;
+            
         }
 
         [Test]
@@ -25,9 +27,10 @@ namespace SimpleL7ProxyTest
             // Arrange
             int item = 1;
             int priority = 1;
+            DateTime dtime = DateTime.Now;
 
             // Act
-            bool result = _mockQueue.Object.Enqueue(item, priority);
+            bool result = _mockQueue.Object.Enqueue(item, priority, dtime);
 
             // Assert
             Assert.IsTrue(result);
@@ -37,13 +40,14 @@ namespace SimpleL7ProxyTest
         [Test]
         public void Enqueue_ShouldReturnFalseWhenQueueIsFull()
         {
+            DateTime timeSpan = DateTime.Now;
             // Arrange
-            _mockQueue.Object.Enqueue(1, 1);
-            _mockQueue.Object.Enqueue(2, 2);
-            _mockQueue.Object.Enqueue(3, 3);
+            _mockQueue.Object.Enqueue(1, 1, timeSpan);
+            _mockQueue.Object.Enqueue(2, 2, timeSpan);
+            _mockQueue.Object.Enqueue(3, 3, timeSpan);
 
             // Act
-            bool result = _mockQueue.Object.Enqueue(4, 4);
+            bool result = _mockQueue.Object.Enqueue(4, 4,timeSpan);
 
             // Assert
             Assert.IsFalse(result);
@@ -53,13 +57,14 @@ namespace SimpleL7ProxyTest
         [Test]
         public void Dequeue_ShouldRemoveAndReturnHighestPriorityItem()
         {
+            DateTime timeSpan = DateTime.Now;
             // Arrange
-            _mockQueue.Object.Enqueue(1, 1);
-            _mockQueue.Object.Enqueue(2, 2);
-            _mockQueue.Object.Enqueue(3, 3);
+            _mockQueue.Object.Enqueue(1, 1, timeSpan);
+            _mockQueue.Object.Enqueue(2, 2, timeSpan);
+            _mockQueue.Object.Enqueue(3, 3, timeSpan);
 
             // Act
-            int result = _mockQueue.Object.Dequeue(CancellationToken.None);
+            int result = _mockQueue.Object.Dequeue(CancellationToken.None,"1");
 
             // Assert
             Assert.AreEqual(1, result);
@@ -74,7 +79,7 @@ namespace SimpleL7ProxyTest
             cancellationTokenSource.CancelAfter(1000); // Cancel after 1 second
 
             // Act & Assert
-            Assert.Throws<OperationCanceledException>(() => _mockQueue.Object.Dequeue(cancellationTokenSource.Token));
+            Assert.Throws<OperationCanceledException>(() => _mockQueue.Object.Dequeue(cancellationTokenSource.Token,"1"));
         }
 
         [Test]
@@ -82,10 +87,11 @@ namespace SimpleL7ProxyTest
         {
             // Arrange
             var cancellationTokenSource = new CancellationTokenSource();
-            var dequeueTask = Task.Run(() => _mockQueue.Object.Dequeue(cancellationTokenSource.Token));
+            DateTime timeSpan = DateTime.Now;
+            var dequeueTask = Task.Run(() => _mockQueue.Object.Dequeue(cancellationTokenSource.Token ,"1"));
 
             // Act
-            _mockQueue.Object.Enqueue(1, 1);
+            _mockQueue.Object.Enqueue(1, 1,timeSpan);
 
             // Assert
             Assert.AreEqual(1, dequeueTask.Result);
